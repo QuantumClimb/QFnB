@@ -53,7 +53,7 @@ export class SupabaseReservationService implements IReservationService {
     return this.mapToDomain(data);
   }
 
-  async createReservation(input: CreateReservationInput, outletId = "dev-outlet-001", orgId = "dev-org-001"): Promise<Reservation> {
+  async createReservation(input: CreateReservationInput, outletId = "7e76ef38-0b8d-4a17-8ebd-c89b455270a4", orgId = "73b9d863-89e8-4999-87a3-f76e2c716268"): Promise<Reservation> {
     const row: Record<string, any> = {
       organization_id: orgId,
       outlet_id: outletId,

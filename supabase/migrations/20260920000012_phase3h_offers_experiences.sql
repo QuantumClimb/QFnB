@@ -503,6 +503,7 @@ ALTER TABLE public.reservation_addons ENABLE ROW LEVEL SECURITY;
 
 -- 9.1: Experiences RLS
 -- Allows org-wide catalogue items (outlet_id IS NULL) or outlet-specific items
+DROP POLICY IF EXISTS "experiences_access" ON public.experiences;
 CREATE POLICY "experiences_access"
     ON public.experiences
     FOR ALL
@@ -518,6 +519,7 @@ CREATE POLICY "experiences_access"
     );
 
 -- 9.2: Experience Add-ons RLS
+DROP POLICY IF EXISTS "experience_addons_access" ON public.experience_addons;
 CREATE POLICY "experience_addons_access"
     ON public.experience_addons
     FOR ALL
@@ -533,6 +535,7 @@ CREATE POLICY "experience_addons_access"
     );
 
 -- 9.3: Offers RLS
+DROP POLICY IF EXISTS "offers_access" ON public.offers;
 CREATE POLICY "offers_access"
     ON public.offers
     FOR ALL
@@ -548,6 +551,7 @@ CREATE POLICY "offers_access"
     );
 
 -- 9.4: Availability Rules RLS
+DROP POLICY IF EXISTS "exp_avail_rules_access" ON public.experience_availability_rules;
 CREATE POLICY "exp_avail_rules_access"
     ON public.experience_availability_rules
     FOR ALL
@@ -563,6 +567,7 @@ CREATE POLICY "exp_avail_rules_access"
     );
 
 -- 9.5: Reservation Experiences Operational RLS (strictly outlet-scoped)
+DROP POLICY IF EXISTS "res_experiences_access" ON public.reservation_experiences;
 CREATE POLICY "res_experiences_access"
     ON public.reservation_experiences
     FOR ALL
@@ -570,6 +575,7 @@ CREATE POLICY "res_experiences_access"
     WITH CHECK (public.has_outlet_access(auth.uid(), organization_id, outlet_id));
 
 -- 9.6: Reservation Add-ons Operational RLS (strictly outlet-scoped)
+DROP POLICY IF EXISTS "res_addons_access" ON public.reservation_addons;
 CREATE POLICY "res_addons_access"
     ON public.reservation_addons
     FOR ALL

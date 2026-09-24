@@ -1,18 +1,22 @@
 -- Migration 01: Core Tables & Enums for Q F&B Multi-Tenant Platform
 
 -- 1. App Role Enum
-CREATE TYPE app_role AS ENUM (
-  'owner',
-  'admin',
-  'manager',
-  'host',
-  'marketing',
-  'staff',
-  'viewer'
-);
+DO $$ BEGIN
+  CREATE TYPE app_role AS ENUM (
+    'owner',
+    'admin',
+    'manager',
+    'host',
+    'marketing',
+    'staff',
+    'viewer'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- 2. Profiles Table
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT,
   phone TEXT,
@@ -22,7 +26,7 @@ CREATE TABLE public.profiles (
 );
 
 -- 3. Organizations Table
-CREATE TABLE public.organizations (
+CREATE TABLE IF NOT EXISTS public.organizations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
@@ -35,7 +39,7 @@ CREATE TABLE public.organizations (
 );
 
 -- 4. Organization Memberships
-CREATE TABLE public.organization_members (
+CREATE TABLE IF NOT EXISTS public.organization_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -45,7 +49,7 @@ CREATE TABLE public.organization_members (
 );
 
 -- 5. Outlets Table
-CREATE TABLE public.outlets (
+CREATE TABLE IF NOT EXISTS public.outlets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -62,7 +66,7 @@ CREATE TABLE public.outlets (
 );
 
 -- 6. Outlet Access Memberships
-CREATE TABLE public.outlet_members (
+CREATE TABLE IF NOT EXISTS public.outlet_members (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   outlet_id UUID NOT NULL REFERENCES public.outlets(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -72,7 +76,7 @@ CREATE TABLE public.outlet_members (
 );
 
 -- 7. Organization Invitations
-CREATE TABLE public.organization_invites (
+CREATE TABLE IF NOT EXISTS public.organization_invites (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id UUID NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
   email TEXT NOT NULL,

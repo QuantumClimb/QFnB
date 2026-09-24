@@ -24,6 +24,7 @@ END $$;
 DO $$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'order_item_status_enum') THEN
         CREATE TYPE public.order_item_status_enum AS ENUM (
+            'pending',
             'draft',
             'sent',
             'accepted',
@@ -292,18 +293,21 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_item_status_history ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "orders_tenant_isolation" ON public.orders;
 CREATE POLICY "orders_tenant_isolation"
     ON public.orders
     FOR ALL
     USING (public.has_outlet_access(auth.uid(), organization_id, outlet_id))
     WITH CHECK (public.has_outlet_access(auth.uid(), organization_id, outlet_id));
 
+DROP POLICY IF EXISTS "order_items_tenant_isolation" ON public.order_items;
 CREATE POLICY "order_items_tenant_isolation"
     ON public.order_items
     FOR ALL
     USING (public.has_outlet_access(auth.uid(), organization_id, outlet_id))
     WITH CHECK (public.has_outlet_access(auth.uid(), organization_id, outlet_id));
 
+DROP POLICY IF EXISTS "order_item_history_tenant_isolation" ON public.order_item_status_history;
 CREATE POLICY "order_item_history_tenant_isolation"
     ON public.order_item_status_history
     FOR ALL

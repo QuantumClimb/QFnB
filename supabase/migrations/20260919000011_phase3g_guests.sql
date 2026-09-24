@@ -390,6 +390,7 @@ $$;
 -- 7.2 Guests RLS: Organization-scoped visibility
 -- Notice: guests has NO outlet_id column. It is scoped to organization_id.
 -- Any authorized staff across the organization's outlets can recognize guests.
+DROP POLICY IF EXISTS "guests_org_access" ON public.guests;
 CREATE POLICY "guests_org_access"
     ON public.guests
     FOR ALL
@@ -399,6 +400,7 @@ CREATE POLICY "guests_org_access"
 -- 7.3 Guest Visits RLS: Outlet-scoped operational access
 -- Notice: guest_visits has BOTH organization_id and outlet_id.
 -- Staff access is strictly validated via has_outlet_access().
+DROP POLICY IF EXISTS "guest_visits_outlet_access" ON public.guest_visits;
 CREATE POLICY "guest_visits_outlet_access"
     ON public.guest_visits
     FOR ALL

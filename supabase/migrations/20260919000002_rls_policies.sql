@@ -25,13 +25,16 @@ END;
 $$;
 
 -- RLS Policies for Profiles
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id);
 
 -- RLS Policies for Organizations
+DROP POLICY IF EXISTS "Members can view accessible organization" ON public.organizations;
 CREATE POLICY "Members can view accessible organization" ON public.organizations
   FOR SELECT USING (
     EXISTS (
@@ -41,6 +44,7 @@ CREATE POLICY "Members can view accessible organization" ON public.organizations
     )
   );
 
+DROP POLICY IF EXISTS "Owners and Admins can update organization" ON public.organizations;
 CREATE POLICY "Owners and Admins can update organization" ON public.organizations
   FOR UPDATE USING (
     EXISTS (
@@ -52,6 +56,7 @@ CREATE POLICY "Owners and Admins can update organization" ON public.organization
   );
 
 -- RLS Policies for Outlets
+DROP POLICY IF EXISTS "Members can view permitted outlets" ON public.outlets;
 CREATE POLICY "Members can view permitted outlets" ON public.outlets
   FOR SELECT USING (
     public.is_org_member(auth.uid(), organization_id)
@@ -77,6 +82,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

@@ -81,6 +81,7 @@ CREATE INDEX IF NOT EXISTS idx_outlet_settings_org_id
 ALTER TABLE public.outlet_settings ENABLE ROW LEVEL SECURITY;
 
 -- READ: Any org member
+DROP POLICY IF EXISTS "Org members can read outlet settings" ON public.outlet_settings;
 CREATE POLICY "Org members can read outlet settings"
   ON public.outlet_settings
   FOR SELECT
@@ -91,6 +92,7 @@ CREATE POLICY "Org members can read outlet settings"
 -- WRITE: Owner, Admin, Manager only
 -- PRODUCTION NOTE: For Hotel Mode toggles specifically, consider restricting
 -- to owner/admin only via a separate granular policy in a future migration.
+DROP POLICY IF EXISTS "Managers and above can write outlet settings" ON public.outlet_settings;
 CREATE POLICY "Managers and above can write outlet settings"
   ON public.outlet_settings
   FOR ALL

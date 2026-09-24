@@ -251,14 +251,16 @@ CREATE INDEX IF NOT EXISTS idx_waitlist_history_entry
 ALTER TABLE public.waitlist_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.waitlist_status_history ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "waitlist_entries_tenant_isolation" ON public.waitlist_entries;
 CREATE POLICY "waitlist_entries_tenant_isolation"
     ON public.waitlist_entries
     FOR ALL
-    USING (public.has_outlet_access(outlet_id))
-    WITH CHECK (public.has_outlet_access(outlet_id));
+    USING (public.has_outlet_access(auth.uid(), organization_id, outlet_id))
+    WITH CHECK (public.has_outlet_access(auth.uid(), organization_id, outlet_id));
 
+DROP POLICY IF EXISTS "waitlist_status_history_tenant_isolation" ON public.waitlist_status_history;
 CREATE POLICY "waitlist_status_history_tenant_isolation"
     ON public.waitlist_status_history
     FOR ALL
-    USING (public.has_outlet_access(outlet_id))
-    WITH CHECK (public.has_outlet_access(outlet_id));
+    USING (public.has_outlet_access(auth.uid(), organization_id, outlet_id))
+    WITH CHECK (public.has_outlet_access(auth.uid(), organization_id, outlet_id));

@@ -19,12 +19,11 @@ DO $$ BEGIN
         WHERE enumtypid = 'public.order_item_status_enum'::regtype 
           AND enumlabel = 'pending'
     ) THEN
-        ALTER TYPE public.order_item_status_enum ADD VALUE 'pending' BEFORE 'draft';
+        ALTER TYPE public.order_item_status_enum ADD VALUE 'pending';
     END IF;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
 END $$;
-
-ALTER TABLE public.order_items 
-    ALTER COLUMN status SET DEFAULT 'pending'::public.order_item_status_enum;
 
 -- 2. Prevent Multiple Active Orders per Table (Partial Unique Index)
 -- Completed and cancelled orders do not block opening a new order for a table
